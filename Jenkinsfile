@@ -21,7 +21,6 @@ pipeline {
                         docker build -t $IMAGE_REPO_NAME .
                     '''
                 }
-                // }
             }
         }
 
@@ -41,7 +40,7 @@ pipeline {
         // Uploading Docker images into AWS ECR
         stage('Pushing to ECR') {
             steps{
-                withAWS(credentials: 'aws-access-credential') {
+                withAWS(credentials: 'AWS') {
                     script {
                         def login = ecrLogin()
                         sh('#!/bin/sh -e\n' + "${login}") // hide logging
@@ -56,26 +55,6 @@ pipeline {
                 }
             }
         }
-
-        // Deploying image to EKS
-        stage('Deploy in EKS') {
-            steps {
-                script {
-                        sshagent(credentials : ['ssh']) {
-                                sh '''
-                                    chmod +x auto.sh
-                                    // The 1st instance
-                                    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${DEPLOYMENT_URL_A} uptime
-                                    ssh -v ${SSH_USER}@${DEPLOYMENT_URL_A} < ./auto.sh
-                                    // The 2nd instance
-                                    ssh -o StrictHostKeyChecking=no ${SSH_USER}@${DEPLOYMENT_URL_B} uptime
-                                    ssh -v ${SSH_USER}@${DEPLOYMENT_URL_B} < ./auto.sh
-                                '''
-                    }
-                }
-            }
-        }
-    }
 
     post{
         always {
