@@ -43,13 +43,11 @@ pipeline {
                     script {
                         def login = ecrLogin()
                         sh('#!/bin/sh -e\n' + "${login}") // hide logging
-                        if (env.BRANCH_NAME.startsWith('release/')){
                             sh '''
                             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 817735295857.dkr.ecr.us-east-1.amazonaws.com
                             docker tag repo:latest 817735295857.dkr.ecr.us-east-1.amazonaws.com/repo:latest
                             docker push 817735295857.dkr.ecr.us-east-1.amazonaws.com/repo:latest
                             '''
-                        }
                     }
                 }
             }
