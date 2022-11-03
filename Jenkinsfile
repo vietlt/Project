@@ -55,15 +55,5 @@ pipeline {
             }
         }
     }
-
-    post{
-        always {
-            script {
-                    mail to: "vietlt215@gmail.com",
-                    subject: "Report",
-                    body: "Build result for ${currentBuild.currentResult}"
-            }       
-        }
-    }
 }
 
