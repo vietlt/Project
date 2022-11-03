@@ -30,7 +30,6 @@ pipeline {
                 script {
                     sh'''
                         echo "Hello"
-                        sleep 10
                         docker images
                     '''
                 }
