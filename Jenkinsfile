@@ -52,12 +52,5 @@ pipeline {
                 }
             }
         }
-
-        stage("Deploy chatapp to eks") {
-            steps{
-                sh'kubectl create -f deployment.yaml'
-                sh'kubectl get all'
-            }
-        }
     }
 }
