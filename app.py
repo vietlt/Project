@@ -4,30 +4,32 @@ from flask_mysqldb import MySQL
 from flask import Flask, render_template
 from flask import request
 import datetime
+import pymysql
 import pytz
 
 # creates a Flask application named app 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'mysql'
-app.config['MYSQL_PORT'] = 3306
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root1234'
-app.config['MYSQL_DB'] = 'mysql'
+connection = pymysql.connect(host='rds.c1gcmeouffbj.us-east-1.rds.amazonaws.com',
+                             user='vietlt',
+                             password='Adm!n123',
+                             database='db',
+                             port=3306)
  
-mysql = MySQL(app)
+# mysql = MySQL(app)
 
 host = os.uname()[1]
 
 def createTable():
-    cursor = mysql.connection.cursor()
+    cursor = connection.cursor()
     cursor.execute(''' CREATE TABLE IF NOT EXISTS chat1 (
                         room VARCHAR(20),
                         times VARCHAR(50),
                         username VARCHAR(30),
                         message VARCHAR(50)
                        ) ''')
-    mysql.connection.commit()
+    connection.commit()
+    cursor.close()
 
 def convertTuple(tup):
         # initialize an empty string
@@ -60,13 +62,13 @@ def chat(room):
         time_now = start_utc.strftime("%Y-%m-%d %X")
         username = request.form['username']
         messages = request.form['msg']
-        cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(''' INSERT INTO chat1(room, times, username, message) VALUES (%s,%s,%s,%s)''', (room,time_now,username,messages))
-        mysql.connection.commit()
+        connection.commit()
         cursor.close()
         return ''
     else:
-        cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(''' SELECT * FROM chat1 WHERE room=%s ''', (room,))
         dbs = cursor.fetchall()
         cursor.close()
