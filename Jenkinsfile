@@ -40,7 +40,7 @@ pipeline {
         // Uploading Docker images into AWS ECR
         stage('Pushing to ECR') {
             steps{
-                withAWS(credentials: 'AWS') {
+                withAWS(credentialsId: 'AWS') {
                     script {
                         def login = ecrLogin()
                         sh('#!/bin/sh -e\n' + "${login}") // hide logging
